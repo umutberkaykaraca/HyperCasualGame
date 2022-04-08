@@ -2,6 +2,7 @@ using System.Collections;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class Movement : MonoBehaviour
 {
@@ -13,15 +14,22 @@ public class Movement : MonoBehaviour
     public float rayDistance;
     [Range(1, 50)]
     public int moveSpeed, rotSpeed;
+    public float a = -0.5f;
+    public float b= 0f;
+    public GameObject obj;
+    
+   
+
     
 
     private int yPos=2;
    
- 
-
+    
     void Update()
-    {
-        RaycastHit hit;
+    {   
+        
+    
+       RaycastHit hit;
         Vector3 mousePos = Input.mousePosition;
         Ray ray = Camera.main.ScreenPointToRay(mousePos);
         Vector3 direction = (currentPos - transform.position).normalized;
@@ -39,7 +47,8 @@ public class Movement : MonoBehaviour
             {
                 anim.SetBool("Running", false);
             }
-        }
+        } 
+        
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -76,12 +85,14 @@ public class Movement : MonoBehaviour
         
         if (backPos.transform.childCount > 0)
         {
+           
             
             Money.money++;
-            MeshRenderer mesh = bridgeObj.GetComponent<MeshRenderer>();
+            /*MeshRenderer mesh = bridgeObj.GetComponent<MeshRenderer>();
             mesh.enabled = false;
-            mesh.material.color = Color.red;
+            mesh.material.color = Color.red; */
             int obstacleNumber = backPos.transform.childCount - 1;
+            backPos.transform.DOMoveY(b, 3f).OnComplete(()=>azalt());
             Destroy(backPos.GetChild(obstacleNumber).gameObject);
             yPos -= 1;
             
@@ -89,11 +100,25 @@ public class Movement : MonoBehaviour
        
     }
     
-    private void AddBack(GameObject obj)
+    public void AddBack(GameObject obj)
     {
         obj.transform.SetParent(backPos.transform);
         obj.transform.rotation = backPos.rotation;
         obj.transform.position = new Vector3(backPos.position.x,yPos,backPos.position.z);
-        yPos += 1;
+        
+        //obj.transform.DOLocalMove( new Vector3( 0f, 0f, 0f ), 1.5f );
+        obj.transform.DOMoveY(a, 0.3f).OnComplete(()=>arttir());
+        //yPos += 1;
+        
+    }
+    void arttir()
+    {
+        a++;
+        b++;
+    }
+    void azalt()
+    {
+        a--;
+        
     }
 }
